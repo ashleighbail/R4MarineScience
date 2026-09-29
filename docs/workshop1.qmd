@@ -43,9 +43,10 @@ The table below summarises the mean body mass recorded for each species and
 island combination.
 
 ```{r}
-#| echo: false
+#| echo: true
 #| message: false
 #| output: false
+#| code-fold: true
 
 # Pipe data to group_by() and summarise() to calculate the mean body mass for each species and island
 island_species_summary <- penguins %>%
@@ -57,8 +58,9 @@ island_species_summary <- penguins %>%
 
 
 ```{r}
-#| echo: false
+#| echo: true
 #| message: false
+#| code-fold: true
 
 island_species_summary |>
   knitr::kable(
@@ -77,9 +79,10 @@ Body mass varied between the three penguin species and across the islands
 where they were sampled.
 
 ```{r}
-#| echo: false
+#| echo: true
 #| warning: false
 #| message: false
+#| code-fold: true
 #| fig-width: 8
 #| fig-height: 5
 
@@ -106,10 +109,11 @@ Standard deviation shows the variation in body mass among individual penguins
 within each species and island group.
 
 ```{r}
-#| echo: false
+#| echo: true
 #| warning: false
 #| fig-width: 8
 #| fig-height: 5
+#| code-fold: true
 
 # Pipe directly from aggregation to plotting with error bars
 mass_compare_plot <- penguins |>
@@ -142,9 +146,10 @@ square root of the sample size. This provides an indication of the precision
 of the estimated group means.
 
 ```{r}
-#| echo: false
+#| echo: true
 #| message: false
 #| output: false
+#| code-fold: true
 
 mass_summary <- penguins |>
   group_by(species, island) |>
@@ -160,8 +165,9 @@ mass_summary <- penguins |>
 ```
 
 ```{r}
-#| echo: false
+#| echo: true
 #| message: false
+#| code-fold: true
 
 mass_summary |>
   mutate(
@@ -184,10 +190,11 @@ mass_summary |>
 
 
 ```{r}
-#| echo: false
+#| echo: true
 #| warning: false
 #| fig-width: 8
 #| fig-height: 5
+#| code-fold: true
 
 mass_compare_se_plot <- mass_summary |>
   ggplot(aes(
