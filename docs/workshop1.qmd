@@ -7,6 +7,7 @@ output:
  html_document:
     code_folding: show
     collapse: no
+    embed-resources: true
     df_print: paged
     fig_caption: yes
     fig_height: 6
