@@ -1,0 +1,21 @@
+---
+title: "Estuary Fish Survey - Data Rescue Mission"
+subtitle: "Keystone Exercise"
+author: "Ashleigh Bail"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+ html_document:
+    code_folding: show
+    collapse: no
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 10
+    highlight: textmate
+    self-contained: true
+    theme: spacelab
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: inline
+---
