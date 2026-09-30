@@ -1,0 +1,123 @@
+---
+title: "Workshop 2: Advanced Data Wrangling"
+subtitle: "Extracting ecological signals from noisy systems"
+author: "Ashleigh Bail"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+ html_document:
+    code_folding: show
+    collapse: no
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 10
+    highlight: textmate
+    self-contained: true
+    theme: spacelab
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+### Exercise 1: Cleaning the messy metadata
+
+```{r}
+#| hidden: true
+# Loaded packages
+library(tidyverse)
+library(palmerpenguins)
+```
+Before cleaning:
+```{r}
+#| code-fold: true
+#| echo: true
+
+# The messy metadata provided by the colleague
+island_metadata <- tibble(
+  island_name = c(" biscoe", "Dream", "Torgersen"),
+  station_install = c("15/01/2003", "22-03-2004", "05/11/2001"),
+  latitude = c(-64.81, -64.73, -64.76)
+)
+
+island_metadata 
+```
+After cleaning:
+```{r}
+#| code-fold: true
+#| echo: true
+
+clean_metadata <- island_metadata |>
+  mutate(
+    island_name = island_name |>
+      str_trim() |>                  # Removing additional spaces
+      str_to_title(),                # Changing to title case
+    
+    station_install = parse_date_time(
+      station_install,
+      orders = c("dmy", "d-m-Y")     # Ensuring dates are all formatted the same
+    ) |>
+      as_date()
+  ) |>
+  rename(
+    "Island" = island_name,
+    "Date" = station_install,
+    "Latitude" = latitude
+  )
+ 
+clean_metadata |> 
+  knitr::kable(
+    digits = 1,
+    caption = "Island metadata."
+  )
+```
+
+### Exercise 2: The Relational Join
+Combining the clean metadata with biological data.
+
+```{r}
+#| code-fold: true
+#| echo: true
+
+penguins_spatial <- penguins |>
+  left_join(
+    clean_metadata,
+    join_by(island == Island)
+  )
+
+names(penguins_spatial) <- names(penguins_spatial) |>
+  str_to_title() |>
+  str_replace_all("_", " ")
+
+head(penguins_spatial) |>
+  knitr::kable(
+    digits = 1,
+    caption = "Penguins Spatial Dataset"
+  )
+```
+### Exercise 3: The Wide Summary Matrix
+A clean, publication-ready table showing the maximum body mass recorded for each species, separated by island.
+
+```{r}
+#| code-fold: true
+#| echo: true
+
+penguins_mass_table <- penguins_spatial |>
+  drop_na(`Body mass g`) |>
+  group_by(Species, Island) |>
+  summarise(
+    max_body_mass = max(`Body mass g`),
+    .groups = "drop"
+  ) |>
+  pivot_wider(
+    names_from = Island,
+    values_from = max_body_mass
+  )
+
+penguins_mass_table |>
+  knitr::kable(
+    digits = 1,
+    caption = "Maximum Body Mass (g) by Species and by Island"
+  )
+```
+
