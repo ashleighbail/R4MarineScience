@@ -68,7 +68,7 @@ clean_metadata <- island_metadata |>
 clean_metadata |> 
   knitr::kable(
     digits = 1,
-    caption = "Island metadata."
+    caption = "Island metadata"
   )
 ```
 
