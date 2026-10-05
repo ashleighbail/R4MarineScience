@@ -27,4 +27,5 @@ editor_options:
 options(repos = c(CRAN = "https://r-project.org"))
 
 source("../code/keystone-workshop2.R")
+
 ```
