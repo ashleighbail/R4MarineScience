@@ -19,3 +19,12 @@ output:
 editor_options: 
   chunk_output_type: inline
 ---
+
+```{r}
+#| message: false
+#| warning: false
+#| include: false
+options(repos = c(CRAN = "https://r-project.org"))
+
+source("../code/keystone-workshop2.R")
+```
