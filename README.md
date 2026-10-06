@@ -18,4 +18,6 @@ Description
 
 **Workshop files**
 
+- `code/keystone-workshop2.R` – R 
 - `docs/workshop2.qmd` – Quarto document used to produce the initial workbook exercises
+- `docs/keystone-workshop2.qmd` –
