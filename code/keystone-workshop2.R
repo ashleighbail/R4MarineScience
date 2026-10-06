@@ -250,11 +250,4 @@ summary_table_clean <- summary_table |>
 
 summary_table_clean
 
-master_dataset <- complete_catch |>
-  mutate(
-    date = as.Date(date)
-  )
-write_csv(
-  master_dataset,
-  "outputs/tables/estuary_master_dataset.csv"
-)
+

@@ -53,6 +53,13 @@ master_dataset_display <- master_dataset |>
     across(
       c(lat, lon, mean_temperature, mean_salinity, mean_turbidity),
       ~ round(.x, 2)
+    ),
+     scientific_name = case_when(
+      scientific_name == "Acanthopagrus spp." ~ "*Acanthopagrus* spp.",
+      scientific_name == "Lates calcarifer" ~ "*Lates calcarifer*",
+      scientific_name == "Lutjanus argentimaculatus" ~ "*Lutjanus argentimaculatus*",
+      scientific_name == "Platycephalus spp." ~ "*Platycephalus* spp.",
+      TRUE ~ scientific_name
     )
   ) |>
   rename(
