@@ -29,3 +29,196 @@ options(repos = c(CRAN = "https://r-project.org"))
 source("../code/keystone-workshop2.R")
 
 ```
+
+### Final master dataset
+
+Table 1 presents a preview of the final master dataset (480 observations), following standardisation of site names, taxonomic translation, removal of erroneous sensor values, integration of environmental data, and completion of zero-catch observations. The full cleaned dataset is available for download in the `outputs/tables` directory as `estuary_master_dataset.csv`.
+```{r}
+#| echo: true
+#| message: false
+#| code-fold: true
+
+master_dataset <- complete_catch
+
+master_dataset_display <- master_dataset |>
+  mutate(
+    # Make site names presentation-friendly
+    site = str_replace_all(site, "_", " "),
+    site = str_to_title(site),
+
+    # Display date as day/month/year
+    date = format(as.Date(date), "%d/%m/%Y"),
+
+    # Round numeric variables for display
+    across(
+      c(lat, lon, mean_temperature, mean_salinity, mean_turbidity),
+      ~ round(.x, 2)
+    )
+  ) |>
+  rename(
+    Site = site,
+    Date = date,
+    `Scientific species` = scientific_name,
+    Count = count,
+    Latitude = lat,
+    Longitude = lon,
+    Zone = zone,
+    `Mean temperature (°C)` = mean_temperature,
+    `Mean salinity (PSU)` = mean_salinity,
+    `Mean turbidity` = mean_turbidity
+  )
+
+knitr::kable(
+  head(master_dataset_display, 12),
+  caption = "Table 1: Preview of the cleaned master estuary dataset.",
+  align = "c"
+)
+```
+
+### Statistical summary table
+
+Table 2 presents the statistical summary of mean fish counts and salinity (± SD) for each species across estuary zones. The table highlights the variability in fish abundance and environmental conditions, providing insights into species distribution patterns within the estuarine ecosystem.
+```{r}
+#| echo: true
+#| message: false
+#| code-fold: true
+
+catch_summary <- master_dataset |>
+  group_by(scientific_name, zone) |>
+  summarise(
+    mean_catch = mean(count, na.rm = TRUE),
+    sd_catch = sd(count, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+salinity_summary <- master_dataset |>
+  distinct(site, date, zone, mean_salinity) |>
+  group_by(zone) |>
+  summarise(
+    salinity_mean = mean(mean_salinity, na.rm = TRUE),
+    salinity_sd = sd(mean_salinity, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+statistical_summary_table <- catch_summary |>
+  left_join(
+    salinity_summary,
+    by = "zone"
+  )
+
+summary_table_display <- statistical_summary_table |>
+  mutate(
+    zone = factor(
+      zone,
+      levels = c(
+        "Upstream",
+        "Middle",
+        "Downstream",
+        "Marine"
+      )
+    ),
+    scientific_name = case_when(
+      scientific_name == "Acanthopagrus spp." ~ "*Acanthopagrus* spp.",
+      scientific_name == "Lates calcarifer" ~ "*Lates calcarifer*",
+      scientific_name == "Lutjanus argentimaculatus" ~ "*Lutjanus argentimaculatus*",
+      scientific_name == "Platycephalus spp." ~ "*Platycephalus* spp.",
+      TRUE ~ scientific_name
+    )
+  ) |>
+  arrange(scientific_name, zone) |>
+  transmute(
+    `Scientific species` = scientific_name,
+    `Estuary zone` = zone,
+    `Fish count (mean ± SD)` = sprintf(
+      "%.2f ± %.2f",
+      mean_catch,
+      sd_catch
+    ),
+    `Salinity (mean ± SD)` = sprintf(
+      "%.2f ± %.2f",
+      salinity_mean,
+      salinity_sd
+    )
+  )
+
+knitr::kable(
+  summary_table_display,
+  align = c("l", "l", "c", "c"),
+  caption = paste(
+    "Table 2: Mean (± SD) fish counts and salinity",
+    "for each species across estuary zones."
+  )
+)
+```
+
+
+### Multi-panel plot
+
+```{r}
+#| echo: true
+#| message: false
+#| code-fold: true
+
+plot_data <- statistical_summary_table |>
+  mutate(
+    zone = factor(
+      zone,
+      levels = c(
+        "Upstream",
+        "Middle",
+        "Downstream",
+        "Marine"
+      )
+    )
+  ) |>
+  arrange(scientific_name, zone)
+
+species_labels <- c(
+  "Acanthopagrus spp." = "italic(Acanthopagrus)~spp.",
+  "Lates calcarifer" = "italic(Lates~calcarifer)",
+  "Lutjanus argentimaculatus" = "italic(Lutjanus~argentimaculatus)",
+  "Platycephalus spp." = "italic(Platycephalus)~spp."
+)
+
+fish_plot <- ggplot(
+  plot_data,
+  aes(
+    x = salinity_mean,
+    y = mean_catch,
+    group = scientific_name
+  )
+) +
+  geom_line() +
+  geom_point(size = 2.5) +
+  geom_errorbar(
+    aes(
+      ymin = mean_catch - sd_catch,
+      ymax = mean_catch + sd_catch
+    ),
+    width = 0.4
+  ) +
+  facet_wrap(
+    ~ scientific_name,
+    labeller = labeller(
+      scientific_name = as_labeller(
+        species_labels,
+        label_parsed
+      )
+    )
+  ) +
+  labs(
+    title = "Fish abundance along the Ross River Estuary salinity gradient" ,
+    x = "Mean salinity (PSU)",
+    y = "Mean fish catch (individuals per sampling day)"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 8),
+    axis.title = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+fish_plot
+```
+
+Figure 1. Mean fish abundance (± SD) along the salinity gradient of the Ross River Estuary. Panels represent individual fish taxa, with salinity increasing from upstream to marine zones.

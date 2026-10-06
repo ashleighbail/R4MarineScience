@@ -9,7 +9,7 @@ library(janitor)
 # -----------------------------
 
 # Find the sheet names in the catch log
-catch_sheets <- excel_sheets("data/workshop2/estuary_catch_log.xlsx")
+catch_sheets <- excel_sheets(here::here("data/workshop2/estuary_catch_log.xlsx"))
 catch_sheets
 
 # Read all Excel sheets and combine them into one dataframe
@@ -17,7 +17,7 @@ catch_log <- catch_sheets |>
   set_names() |>
   map_dfr(
     ~ read_excel(
-      "data/workshop2/estuary_catch_log.xlsx",
+      here::here("data/workshop2/estuary_catch_log.xlsx"),
       sheet = .x
     ),
     .id = "site"
@@ -46,7 +46,7 @@ unique(catch_log$species)
 # Import site metadata
 # -----------------------------
 
-metadata <- read_csv("data/workshop2/estuary_metadata.csv")
+metadata <- read_csv(here::here("data/workshop2/estuary_metadata.csv"))
 glimpse(metadata)
 metadata
 
@@ -68,7 +68,7 @@ catch_log |>
 # Import sonde data
 # -----------------------------
 
-sonde <- read_csv("data/workshop2/estuary_sonde_data.csv")
+sonde <- read_csv(here::here("data/workshop2/estuary_sonde_data.csv"))
 glimpse(sonde)
 
 # Convert timestamp from character to date-time
@@ -98,7 +98,7 @@ unique(sonde$site)
 # -----------------------------
 
 species_dictionary <- read_csv(
-  "data/workshop2/species_dictionary.csv"
+  here::here("data/workshop2/species_dictionary.csv")
 )
 glimpse(species_dictionary)
 species_dictionary
@@ -250,119 +250,11 @@ summary_table_clean <- summary_table |>
 
 summary_table_clean
 
-
-# EVERYTHING BELOW THIS INTO QMD
-# -----------------------------
-# Phase 4: Clean summary table
-# -----------------------------
-
-summary_table_display <- summary_table |>
+master_dataset <- complete_catch |>
   mutate(
-    zone = factor(
-      zone,
-      levels = c(
-        "Upstream",
-        "Middle",
-        "Downstream",
-        "Marine"
-      )
-    )
-  ) |>
-  arrange(scientific_name, zone) |>
-  transmute(
-    scientific_name,
-    zone,
-    catch_summary = sprintf(
-      "%.2f ± %.2f",
-      mean_catch,
-      se_catch
-    ),
-    salinity_summary = sprintf(
-      "%.2f ± %.2f",
-      salinity_mean,
-      salinity_se
-    )
+    date = as.Date(date)
   )
-
-summary_table_display
-
-knitr::kable(
-  summary_table_display,
-  col.names = c(
-    "Scientific species",
-    "Estuary zone",
-    "Catch (mean ± SE)",
-    "Salinity (mean ± SE)"
-  ),
-  align = c("l", "l", "c", "c"),
-  caption = paste(
-    "Mean fish catch and salinity (± SE)",
-    "across the Ross River Estuary gradient."
-  )
+write_csv(
+  master_dataset,
+  "outputs/tables/estuary_master_dataset.csv"
 )
-
-# -----------------------------
-# Phase 5: Visual Communication
-# -----------------------------
-
-plot_data <- summary_table |>
-  mutate(
-    zone = factor(
-      zone,
-      levels = c(
-        "Upstream",
-        "Middle",
-        "Downstream",
-        "Marine"
-      )
-    )
-  ) |>
-  arrange(scientific_name, zone)
-plot_data
-
-species_labels <- c(
-  "Acanthopagrus spp." = "italic(Acanthopagrus)~spp.",
-  "Lates calcarifer" = "italic(Lates~calcarifer)",
-  "Lutjanus argentimaculatus" = "italic(Lutjanus~argentimaculatus)",
-  "Platycephalus spp." = "italic(Platycephalus)~spp."
-)
-
-fish_plot <- ggplot(
-  plot_data,
-  aes(
-    x = salinity_mean,
-    y = mean_catch,
-    group = scientific_name
-  )
-) +
-  geom_line() +
-  geom_point(size = 2.5) +
-  geom_errorbar(
-    aes(
-      ymin = mean_catch - se_catch,
-      ymax = mean_catch + se_catch
-    ),
-    width = 0.4
-  ) +
-  facet_wrap(
-    ~ scientific_name,
-    labeller = labeller(
-      scientific_name = as_labeller(
-        species_labels,
-        label_parsed
-      )
-    )
-  ) +
-  labs(
-    x = "Mean salinity (PSU)",
-    y = "Mean fish catch (individuals per sampling day)"
-  ) +
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 8),
-    axis.title = element_text(size = 10)
-  )
-
-fish_plot
-
-

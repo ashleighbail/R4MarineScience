@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ashleigh Bail">
-<meta name="dcterms.date" content="2026-09-30">
+<meta name="dcterms.date" content="2026-10-06">
 
 <title>Estuary Fish Survey - Data Rescue Mission</title>
 <style>
@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 30, 2026</p>
+      <p class="date">October 6, 2026</p>
     </div>
   </div>
   
@@ -119,26 +119,494 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="final-master-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="final-master-dataset">Final master dataset</h3>
+<p>Table 1 presents a preview of the final master dataset (480 observations), following standardisation of site names, taxonomic translation, removal of erroneous sensor values, integration of environmental data, and completion of zero-catch observations. The full cleaned dataset is available for download in the <code>outputs/tables</code> directory as <code>estuary_master_dataset.csv</code>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>master_dataset <span class="ot">&lt;-</span> complete_catch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>master_dataset_display <span class="ot">&lt;-</span> master_dataset <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Make site names presentation-friendly</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">site =</span> <span class="fu">str_replace_all</span>(site, <span class="st">"_"</span>, <span class="st">" "</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">site =</span> <span class="fu">str_to_title</span>(site),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Display date as day/month/year</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">format</span>(<span class="fu">as.Date</span>(date), <span class="st">"%d/%m/%Y"</span>),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Round numeric variables for display</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(lat, lon, mean_temperature, mean_salinity, mean_turbidity),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">2</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">Site =</span> site,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">Date =</span> date,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Scientific species</span><span class="st">`</span> <span class="ot">=</span> scientific_name,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Count =</span> count,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">Latitude =</span> lat,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">Longitude =</span> lon,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">Zone =</span> zone,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Mean temperature (°C)</span><span class="st">`</span> <span class="ot">=</span> mean_temperature,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Mean salinity (PSU)</span><span class="st">`</span> <span class="ot">=</span> mean_salinity,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Mean turbidity</span><span class="st">`</span> <span class="ot">=</span> mean_turbidity</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(master_dataset_display, <span class="dv">12</span>),</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Table 1: Preview of the cleaned master estuary dataset."</span>,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">align =</span> <span class="st">"c"</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 1: Preview of the cleaned master estuary dataset.</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 17%">
+<col style="width: 4%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 15%">
+<col style="width: 13%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Site</th>
+<th style="text-align: center;">Date</th>
+<th style="text-align: center;">Scientific species</th>
+<th style="text-align: center;">Count</th>
+<th style="text-align: center;">Latitude</th>
+<th style="text-align: center;">Longitude</th>
+<th style="text-align: center;">Zone</th>
+<th style="text-align: center;">Mean temperature (°C)</th>
+<th style="text-align: center;">Mean salinity (PSU)</th>
+<th style="text-align: center;">Mean turbidity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">01/05/2026</td>
+<td style="text-align: center;">Acanthopagrus spp.</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.79</td>
+<td style="text-align: center;">28.35</td>
+<td style="text-align: center;">27.91</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">01/05/2026</td>
+<td style="text-align: center;">Lates calcarifer</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.79</td>
+<td style="text-align: center;">28.35</td>
+<td style="text-align: center;">27.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">01/05/2026</td>
+<td style="text-align: center;">Lutjanus argentimaculatus</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.79</td>
+<td style="text-align: center;">28.35</td>
+<td style="text-align: center;">27.91</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">01/05/2026</td>
+<td style="text-align: center;">Platycephalus spp.</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.79</td>
+<td style="text-align: center;">28.35</td>
+<td style="text-align: center;">27.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">02/05/2026</td>
+<td style="text-align: center;">Acanthopagrus spp.</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.98</td>
+<td style="text-align: center;">27.74</td>
+<td style="text-align: center;">24.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">02/05/2026</td>
+<td style="text-align: center;">Lates calcarifer</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.98</td>
+<td style="text-align: center;">27.74</td>
+<td style="text-align: center;">24.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">02/05/2026</td>
+<td style="text-align: center;">Lutjanus argentimaculatus</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.98</td>
+<td style="text-align: center;">27.74</td>
+<td style="text-align: center;">24.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">02/05/2026</td>
+<td style="text-align: center;">Platycephalus spp.</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">23.98</td>
+<td style="text-align: center;">27.74</td>
+<td style="text-align: center;">24.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">03/05/2026</td>
+<td style="text-align: center;">Acanthopagrus spp.</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">24.17</td>
+<td style="text-align: center;">28.06</td>
+<td style="text-align: center;">20.57</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">03/05/2026</td>
+<td style="text-align: center;">Lates calcarifer</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">24.17</td>
+<td style="text-align: center;">28.06</td>
+<td style="text-align: center;">20.57</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">03/05/2026</td>
+<td style="text-align: center;">Lutjanus argentimaculatus</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">24.17</td>
+<td style="text-align: center;">28.06</td>
+<td style="text-align: center;">20.57</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Lower Ross</td>
+<td style="text-align: center;">03/05/2026</td>
+<td style="text-align: center;">Platycephalus spp.</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">-19.26</td>
+<td style="text-align: center;">146.81</td>
+<td style="text-align: center;">Downstream</td>
+<td style="text-align: center;">24.17</td>
+<td style="text-align: center;">28.06</td>
+<td style="text-align: center;">20.57</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
+<section id="statistical-summary-table" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-summary-table">Statistical summary table</h3>
+<p>Table 2 presents the statistical summary of mean fish counts and salinity (± SD) for each species across estuary zones. The table highlights the variability in fish abundance and environmental conditions, providing insights into species distribution patterns within the estuarine ecosystem.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>catch_summary <span class="ot">&lt;-</span> master_dataset <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(scientific_name, zone) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_catch =</span> <span class="fu">mean</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_catch =</span> <span class="fu">sd</span>(count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>salinity_summary <span class="ot">&lt;-</span> master_dataset <span class="sc">|&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(site, date, zone, mean_salinity) <span class="sc">|&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(zone) <span class="sc">|&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">salinity_mean =</span> <span class="fu">mean</span>(mean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">salinity_sd =</span> <span class="fu">sd</span>(mean_salinity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>statistical_summary_table <span class="ot">&lt;-</span> catch_summary <span class="sc">|&gt;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    salinity_summary,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"zone"</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>summary_table_display <span class="ot">&lt;-</span> statistical_summary_table <span class="sc">|&gt;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">zone =</span> <span class="fu">factor</span>(</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      zone,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Upstream"</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Middle"</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Downstream"</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Marine"</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">scientific_name =</span> <span class="fu">case_when</span>(</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>      scientific_name <span class="sc">==</span> <span class="st">"Acanthopagrus spp."</span> <span class="sc">~</span> <span class="st">"*Acanthopagrus* spp."</span>,</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      scientific_name <span class="sc">==</span> <span class="st">"Lates calcarifer"</span> <span class="sc">~</span> <span class="st">"*Lates calcarifer*"</span>,</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>      scientific_name <span class="sc">==</span> <span class="st">"Lutjanus argentimaculatus"</span> <span class="sc">~</span> <span class="st">"*Lutjanus argentimaculatus*"</span>,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>      scientific_name <span class="sc">==</span> <span class="st">"Platycephalus spp."</span> <span class="sc">~</span> <span class="st">"*Platycephalus* spp."</span>,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> scientific_name</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(scientific_name, zone) <span class="sc">|&gt;</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Scientific species</span><span class="st">`</span> <span class="ot">=</span> scientific_name,</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Estuary zone</span><span class="st">`</span> <span class="ot">=</span> zone,</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Fish count (mean ± SD)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>      <span class="st">"%.2f ± %.2f"</span>,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>      mean_catch,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>      sd_catch</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Salinity (mean ± SD)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>      <span class="st">"%.2f ± %.2f"</span>,</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>      salinity_mean,</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>      salinity_sd</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  summary_table_display,</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">align =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="st">"l"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>),</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="fu">paste</span>(</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Table 2: Mean (± SD) fish counts and salinity"</span>,</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">"for each species across estuary zones."</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 2: Mean (± SD) fish counts and salinity for each species across estuary zones.</caption>
+<colgroup>
+<col style="width: 32%">
+<col style="width: 14%">
+<col style="width: 27%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Scientific species</th>
+<th style="text-align: left;">Estuary zone</th>
+<th style="text-align: center;">Fish count (mean ± SD)</th>
+<th style="text-align: center;">Salinity (mean ± SD)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><em>Acanthopagrus</em> spp.</td>
+<td style="text-align: left;">Upstream</td>
+<td style="text-align: center;">2.57 ± 1.65</td>
+<td style="text-align: center;">4.95 ± 0.19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Acanthopagrus</em> spp.</td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: center;">2.23 ± 1.57</td>
+<td style="text-align: center;">14.91 ± 0.40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>Acanthopagrus</em> spp.</td>
+<td style="text-align: left;">Downstream</td>
+<td style="text-align: center;">2.00 ± 1.51</td>
+<td style="text-align: center;">27.97 ± 0.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Acanthopagrus</em> spp.</td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: center;">2.33 ± 1.88</td>
+<td style="text-align: center;">34.02 ± 0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>Lates calcarifer</em></td>
+<td style="text-align: left;">Upstream</td>
+<td style="text-align: center;">4.80 ± 1.69</td>
+<td style="text-align: center;">4.95 ± 0.19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Lates calcarifer</em></td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: center;">2.20 ± 1.32</td>
+<td style="text-align: center;">14.91 ± 0.40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>Lates calcarifer</em></td>
+<td style="text-align: left;">Downstream</td>
+<td style="text-align: center;">1.60 ± 1.40</td>
+<td style="text-align: center;">27.97 ± 0.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Lates calcarifer</em></td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: center;">1.57 ± 1.36</td>
+<td style="text-align: center;">34.02 ± 0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>Lutjanus argentimaculatus</em></td>
+<td style="text-align: left;">Upstream</td>
+<td style="text-align: center;">1.90 ± 1.16</td>
+<td style="text-align: center;">4.95 ± 0.19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Lutjanus argentimaculatus</em></td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: center;">1.97 ± 1.13</td>
+<td style="text-align: center;">14.91 ± 0.40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>Lutjanus argentimaculatus</em></td>
+<td style="text-align: left;">Downstream</td>
+<td style="text-align: center;">2.00 ± 1.64</td>
+<td style="text-align: center;">27.97 ± 0.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Lutjanus argentimaculatus</em></td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: center;">1.50 ± 1.14</td>
+<td style="text-align: center;">34.02 ± 0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>Platycephalus</em> spp.</td>
+<td style="text-align: left;">Upstream</td>
+<td style="text-align: center;">2.30 ± 1.82</td>
+<td style="text-align: center;">4.95 ± 0.19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Platycephalus</em> spp.</td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: center;">1.97 ± 1.45</td>
+<td style="text-align: center;">14.91 ± 0.40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><em>Platycephalus</em> spp.</td>
+<td style="text-align: left;">Downstream</td>
+<td style="text-align: center;">2.10 ± 0.96</td>
+<td style="text-align: center;">27.97 ± 0.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><em>Platycephalus</em> spp.</td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: center;">5.67 ± 1.30</td>
+<td style="text-align: center;">34.02 ± 0.10</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<p>You can add options to executable code like this</p>
+</section>
+<section id="multi-panel-plot" class="level3">
+<h3 class="anchored" data-anchor-id="multi-panel-plot">Multi-panel plot</h3>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> statistical_summary_table <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">zone =</span> <span class="fu">factor</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>      zone,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Upstream"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Middle"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Downstream"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Marine"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(scientific_name, zone)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>species_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Acanthopagrus spp."</span> <span class="ot">=</span> <span class="st">"italic(Acanthopagrus)~spp."</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lates calcarifer"</span> <span class="ot">=</span> <span class="st">"italic(Lates~calcarifer)"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lutjanus argentimaculatus"</span> <span class="ot">=</span> <span class="st">"italic(Lutjanus~argentimaculatus)"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Platycephalus spp."</span> <span class="ot">=</span> <span class="st">"italic(Platycephalus)~spp."</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>fish_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  plot_data,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> salinity_mean,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> mean_catch,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> scientific_name</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> mean_catch <span class="sc">-</span> sd_catch,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> mean_catch <span class="sc">+</span> sd_catch</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.4</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> scientific_name,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">labeller =</span> <span class="fu">labeller</span>(</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">scientific_name =</span> <span class="fu">as_labeller</span>(</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        species_labels,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        label_parsed</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Fish abundance along the Ross River Estuary salinity gradient"</span> ,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Mean salinity (PSU)"</span>,</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Mean fish catch (individuals per sampling day)"</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>),</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>fish_plot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="keystone-workshop2_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+</div>
+<p>Figure 1. Mean fish abundance (± SD) along the salinity gradient of the Ross River Estuary. Panels represent individual fish taxa, with salinity increasing from upstream to marine zones.</p>
 </section>
 
 </main>
