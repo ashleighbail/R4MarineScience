@@ -262,3 +262,311 @@ final_plot
 The redesign makes species-specific feeding patterns more apparent while preserving the distinction between feeding intensity and selectivity. In particular, the shared selectivity scale and zero reference line make differences in preference and avoidance easier to interpret across fish species. Replacing bars with points also reduces visual clutter and places greater emphasis on the estimates and their uncertainty. However, because the original raw observations were unavailable, the redesign cannot address the loss of information caused by presenting only summary statistics. Access to the original fish-visit-level data would allow the underlying distributions and variation in feeding behaviour to be visualised directly.
 
 ### Exercise 2: Queensland Fisheries Data Discovery Challenge
+
+```{r}
+qfish_raw <- read_csv(
+  "../data/workshop3/commercial_fishing_species_raw.csv"
+)
+
+glimpse(qfish_raw)
+names(qfish_raw)
+qfish_raw %>%
+  count(YearType)
+
+qfish <- qfish_raw %>%
+  filter(YearType == "Calendar") %>%
+  select(
+    Fishery,
+    Region,
+    Year,
+    SpeciesCommonName,
+    Licences,
+    Days,
+    Catch_Kg,
+    Catch_T
+  )
+glimpse(qfish)
+
+range(qfish$Year, na.rm = TRUE)
+
+qfish %>%
+  count(Year) %>%
+  arrange(Year)
+
+qfish %>%
+  count(SpeciesCommonName, sort = TRUE) %>%
+  print(n = 50)
+
+qfish %>%
+  filter(str_detect(
+    SpeciesCommonName,
+    regex("coral trout", ignore_case = TRUE)
+  )) %>%
+  distinct(
+    Fishery,
+    Region,
+    SpeciesCommonName
+  ) %>%
+  arrange(
+    SpeciesCommonName,
+    Region
+  )
+
+spanish_mackerel <- qfish %>%
+  filter(SpeciesCommonName == "Mackerel - spanish")
+
+spanish_mackerel %>%
+  distinct(
+    Fishery,
+    Region
+  )
+
+spanish_mackerel %>%
+  group_by(Fishery, Region) %>%
+  summarise(
+    first_year = min(Year),
+    last_year = max(Year),
+    n_years = n_distinct(Year),
+    .groups = "drop"
+  )
+
+spanish_mackerel %>%
+  select(
+    Fishery,
+    Region,
+    Year,
+    Catch_T,
+    Days,
+    Licences
+  ) %>%
+  arrange(Region, Year) %>%
+  print(n = 100)
+
+mackerel_line <- qfish %>%
+  filter(
+    SpeciesCommonName == "Mackerel - spanish",
+    Fishery == "Line",
+    Region %in% c("East Coast", "GOC"),
+    Year <= 2025
+  ) %>%
+  mutate(
+    Region = recode(
+      Region,
+      "GOC" = "Gulf of Carpentaria"
+    )
+  ) %>%
+  arrange(Region, Year)
+
+glimpse(mackerel_line)
+
+mackerel_line %>%
+  select(
+    Region,
+    Year,
+    Catch_T,
+    Days,
+    Licences
+  )
+
+ggplot(
+  mackerel_line,
+  aes(
+    x = Year,
+    y = Catch_T,
+    colour = Region
+  )
+) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(
+    x = "Year",
+    y = "Commercial catch (tonnes)",
+    colour = "Region"
+  ) +
+  theme_minimal()
+
+ggplot(
+  mackerel_line,
+  aes(
+    x = Year,
+    y = Days,
+    colour = Region
+  )
+) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(
+    x = "Year",
+    y = "Reported fishing days",
+    colour = "Region"
+  ) +
+  theme_minimal()
+
+mackerel_line <- qfish %>%
+  filter(
+    SpeciesCommonName == "Mackerel - spanish",
+    Fishery == "Line",
+    Region %in% c("East Coast", "GOC"),
+    Year <= 2025
+  ) %>%
+  mutate(
+    Year = as.numeric(Year),
+    Region = recode(
+      Region,
+      "GOC" = "Gulf of Carpentaria"
+    )
+  ) %>%
+  arrange(Region, Year)
+
+mackerel_line <- qfish %>%
+  filter(
+    SpeciesCommonName == "Mackerel - spanish",
+    Fishery == "Line",
+    Region %in% c("East Coast", "GOC")
+  ) %>%
+  mutate(
+    Year = as.numeric(Year),
+    Region = recode(
+      Region,
+      "GOC" = "Gulf of Carpentaria"
+    )
+  ) %>%
+  filter(Year <= 2025) %>%
+  arrange(Region, Year)
+
+p_catch <- ggplot(
+  mackerel_line,
+  aes(
+    x = Year,
+    y = Catch_T,
+    colour = Region
+  )
+) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.2) +
+  scale_x_continuous(
+    breaks = seq(2008, 2024, by = 4)
+  ) +
+  labs(
+    title = "A. Commercial catch",
+    x = NULL,
+    y = "Catch (tonnes)",
+    colour = "Region"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.position = "top"
+  )
+
+p_effort <- ggplot(
+  mackerel_line,
+  aes(
+    x = Year,
+    y = Days,
+    colour = Region
+  )
+) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.2) +
+  scale_x_continuous(
+    breaks = seq(2008, 2024, by = 4)
+  ) +
+  labs(
+    title = "B. Fishing effort",
+    x = "Calendar year",
+    y = "Reported fishing days",
+    colour = "Region"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.position = "top"
+  )
+```
+
+```{r}
+#| fig-width: 9
+#| fig-height: 7
+#| echo: false
+
+# Commercial catch
+p_catch <- ggplot(
+  mackerel_line,
+  aes(
+    x = Year,
+    y = Catch_T,
+    colour = Region
+  )
+) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.2) +
+  scale_x_continuous(
+    breaks = seq(2008, 2024, by = 4)
+  ) +
+  labs(
+    title = "A. Commercial catch",
+    x = NULL,
+    y = "Catch (tonnes)",
+    colour = "Region"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.position = "top"
+  )
+
+# Fishing effort
+p_effort <- ggplot(
+  mackerel_line,
+  aes(
+    x = Year,
+    y = Days,
+    colour = Region
+  )
+) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.2) +
+  scale_x_continuous(
+    breaks = seq(2008, 2024, by = 4)
+  ) +
+  labs(
+    title = "B. Fishing effort",
+    x = "Calendar year",
+    y = "Reported fishing days",
+    colour = "Region"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank(),
+    legend.position = "top"
+  )
+
+# Combine into final figure
+final_mackerel_plot <-
+  (p_catch / p_effort) +
+  plot_layout(guides = "collect") +
+  plot_annotation(
+    title = "Commercial Spanish mackerel catch and fishing effort",
+    subtitle = "Queensland East Coast and Gulf of Carpentaria line fisheries, 2007–2025"
+  ) &
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold")
+  )
+
+final_mackerel_plot
+```
+
+Figure 1. Commercial Spanish mackerel catch and fishing effort in Queensland line fisheries, 2007–2025. (A) Reported annual commercial catch of Spanish mackerel (Scomberomorus commerson) in the East Coast and Gulf of Carpentaria regions. (B) Reported fishing effort, measured as fishing days, for the same fisheries and regions. East Coast catch declined substantially after 2021 alongside a reduction in reported fishing effort, while Gulf of Carpentaria catch and effort were comparatively stable through much of the time series before declining in 2025. Data: Queensland Fisheries QFISH Commercial Fishing Annual Species Summary Data.
+
+(BEFORE FIGURE)
+Management question. How have reported commercial Spanish mackerel catches and fishing effort changed between Queensland's East Coast and Gulf of Carpentaria line fisheries from 2007 to 2025?
+Commercial catch records were obtained from the Queensland Fisheries QFISH Commercial Fishing Annual Species Summary dataset. Calendar-year records for Spanish mackerel were filtered to the Line fishery and the East Coast and Gulf of Carpentaria regions. Statewide (QLD) records were excluded because they aggregate regional catches and would therefore duplicate observations included in the regional data. Records for 2026 were also excluded because the current year represents an incomplete reporting period.
+
+(AFTER FIGURE)
+Key finding. East Coast Spanish mackerel catch and fishing effort both declined markedly after 2021. Reported catch decreased from approximately 280 tonnes in 2021 to 118 tonnes in 2025, while fishing effort declined from approximately 4,100 to 2,100 fishing days over the same period. Gulf of Carpentaria catch and effort showed a different temporal pattern, remaining comparatively variable but without the same sustained decline through most of the series. Because total catch is influenced by fishing effort as well as fish availability, these trends should not be interpreted as direct measures of Spanish mackerel abundance.
