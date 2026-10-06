@@ -264,20 +264,30 @@ The redesign makes species-specific feeding patterns more apparent while preserv
 ### Exercise 2: Queensland Fisheries Data Discovery Challenge
 
 ```{r}
+#| echo: true
+#| message: false
+#| code-fold: true
+#| output: false
+
 qfish_raw <- read_csv(
   "../data/workshop3/commercial_fishing_species_raw.csv"
 )
 
 glimpse(qfish_raw)
 names(qfish_raw)
+
+# Check the different reporting periods in the dataset
+# QFISH contains both calendar-year and financial-year records
 qfish_raw %>%
   count(YearType)
 
+# ---- Clean the raw data ----
+
 qfish <- qfish_raw %>%
-  filter(YearType == "Calendar") %>%
+  filter(YearType == "Calendar") %>%         # Use calendar-year records only
   select(
-    Fishery,
-    Region,
+    Fishery,                                 # Keep only variables relevant to the 
+    Region,                                  # catch and effort analysis
     Year,
     SpeciesCommonName,
     Licences,
@@ -287,11 +297,15 @@ qfish <- qfish_raw %>%
   )
 glimpse(qfish)
 
+# Temporal coverage of the dataset
 range(qfish$Year, na.rm = TRUE)
 
+# Number of records available for each year
 qfish %>%
   count(Year) %>%
   arrange(Year)
+
+# ---- Explore species available for analysis ----
 
 qfish %>%
   count(SpeciesCommonName, sort = TRUE) %>%
@@ -312,6 +326,7 @@ qfish %>%
     Region
   )
 
+# Extract Spanish mackerel records as a study species
 spanish_mackerel <- qfish %>%
   filter(SpeciesCommonName == "Mackerel - spanish")
 
@@ -342,81 +357,7 @@ spanish_mackerel %>%
   arrange(Region, Year) %>%
   print(n = 100)
 
-mackerel_line <- qfish %>%
-  filter(
-    SpeciesCommonName == "Mackerel - spanish",
-    Fishery == "Line",
-    Region %in% c("East Coast", "GOC"),
-    Year <= 2025
-  ) %>%
-  mutate(
-    Region = recode(
-      Region,
-      "GOC" = "Gulf of Carpentaria"
-    )
-  ) %>%
-  arrange(Region, Year)
-
-glimpse(mackerel_line)
-
-mackerel_line %>%
-  select(
-    Region,
-    Year,
-    Catch_T,
-    Days,
-    Licences
-  )
-
-ggplot(
-  mackerel_line,
-  aes(
-    x = Year,
-    y = Catch_T,
-    colour = Region
-  )
-) +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  labs(
-    x = "Year",
-    y = "Commercial catch (tonnes)",
-    colour = "Region"
-  ) +
-  theme_minimal()
-
-ggplot(
-  mackerel_line,
-  aes(
-    x = Year,
-    y = Days,
-    colour = Region
-  )
-) +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  labs(
-    x = "Year",
-    y = "Reported fishing days",
-    colour = "Region"
-  ) +
-  theme_minimal()
-
-mackerel_line <- qfish %>%
-  filter(
-    SpeciesCommonName == "Mackerel - spanish",
-    Fishery == "Line",
-    Region %in% c("East Coast", "GOC"),
-    Year <= 2025
-  ) %>%
-  mutate(
-    Year = as.numeric(Year),
-    Region = recode(
-      Region,
-      "GOC" = "Gulf of Carpentaria"
-    )
-  ) %>%
-  arrange(Region, Year)
+# ---- Create the final analysis dataset ----
 
 mackerel_line <- qfish %>%
   filter(
@@ -433,6 +374,8 @@ mackerel_line <- qfish %>%
   ) %>%
   filter(Year <= 2025) %>%
   arrange(Region, Year)
+
+# ---- Plot commercial catch ----
 
 p_catch <- ggplot(
   mackerel_line,
@@ -460,6 +403,8 @@ p_catch <- ggplot(
     legend.position = "top"
   )
 
+# ---- Plot fishing effort ----
+
 p_effort <- ggplot(
   mackerel_line,
   aes(
@@ -486,11 +431,16 @@ p_effort <- ggplot(
     legend.position = "top"
   )
 ```
+**Management question:** How have reported commercial Spanish mackerel catches and fishing effort changed between Queensland's East Coast and Gulf of Carpentaria line fisheries from 2007 to 2025?
 
+
+Commercial catch records were obtained from the Queensland Fisheries QFISH Commercial Fishing Annual Species Summary dataset. Calendar-year records for Spanish mackerel were filtered to the Line fishery and the East Coast and Gulf of Carpentaria regions. Statewide (QLD) records were excluded because they aggregate regional catches and would therefore duplicate observations included in the regional data. Records for 2026 were also excluded because the current year represents an incomplete reporting period.
 ```{r}
 #| fig-width: 9
 #| fig-height: 7
-#| echo: false
+#| echo: true
+#| message: false
+#| code-fold: true
 
 # Commercial catch
 p_catch <- ggplot(
@@ -562,11 +512,8 @@ final_mackerel_plot <-
 final_mackerel_plot
 ```
 
-Figure 1. Commercial Spanish mackerel catch and fishing effort in Queensland line fisheries, 2007–2025. (A) Reported annual commercial catch of Spanish mackerel (Scomberomorus commerson) in the East Coast and Gulf of Carpentaria regions. (B) Reported fishing effort, measured as fishing days, for the same fisheries and regions. East Coast catch declined substantially after 2021 alongside a reduction in reported fishing effort, while Gulf of Carpentaria catch and effort were comparatively stable through much of the time series before declining in 2025. Data: Queensland Fisheries QFISH Commercial Fishing Annual Species Summary Data.
 
-(BEFORE FIGURE)
-Management question. How have reported commercial Spanish mackerel catches and fishing effort changed between Queensland's East Coast and Gulf of Carpentaria line fisheries from 2007 to 2025?
-Commercial catch records were obtained from the Queensland Fisheries QFISH Commercial Fishing Annual Species Summary dataset. Calendar-year records for Spanish mackerel were filtered to the Line fishery and the East Coast and Gulf of Carpentaria regions. Statewide (QLD) records were excluded because they aggregate regional catches and would therefore duplicate observations included in the regional data. Records for 2026 were also excluded because the current year represents an incomplete reporting period.
+**Figure 1.** Commercial Spanish mackerel catch and fishing effort in Queensland line fisheries, 2007–2025. (A) Annual reported commercial catch and (B) reported fishing effort for the East Coast and Gulf of Carpentaria regions. Data were obtained from the Queensland Fisheries QFISH Commercial Fishing Annual Species Summary dataset. Statewide (QLD) records were excluded to avoid duplication of regional totals.
 
-(AFTER FIGURE)
-Key finding. East Coast Spanish mackerel catch and fishing effort both declined markedly after 2021. Reported catch decreased from approximately 280 tonnes in 2021 to 118 tonnes in 2025, while fishing effort declined from approximately 4,100 to 2,100 fishing days over the same period. Gulf of Carpentaria catch and effort showed a different temporal pattern, remaining comparatively variable but without the same sustained decline through most of the series. Because total catch is influenced by fishing effort as well as fish availability, these trends should not be interpreted as direct measures of Spanish mackerel abundance.
+
+Reported Spanish mackerel catch in the East Coast line fishery declined substantially after 2021, coinciding with a marked reduction in reported fishing effort. In comparison, Gulf of Carpentaria catch and effort were relatively stable through most of the time series. Because commercial catch is influenced by fishing effort as well as fish availability, these trends should not be interpreted as direct measures of Spanish mackerel abundance. The low Gulf of Carpentaria values in 2025 should be interpreted cautiously, as reporting completeness was not independently assessed.
