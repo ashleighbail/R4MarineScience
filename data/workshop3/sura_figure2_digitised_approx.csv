@@ -1,0 +1,50 @@
+fish_species,functional_group,n_fish_visits,macroalgae,algal_order,bites_mean,bites_se_lower,bites_se_upper,selectivity_mean,selectivity_ci95_lower,selectivity_ci95_upper,data_status
+Naso lituratus,Browser,73,Padina boryana,1,4.65,4.25,5.05,0.59,0.51,0.67,manually approximated from published Figure 2
+Naso lituratus,Browser,73,Dictyota sp.,2,0.0,0.0,0.0,-0.07,-0.1,-0.04,manually approximated from published Figure 2
+Naso lituratus,Browser,73,Acanthophora spicifera,3,0.03,0.0,0.08,-0.06,-0.09,-0.03,manually approximated from published Figure 2
+Naso lituratus,Browser,73,Sargassum mangarevense,4,1.1,0.85,1.35,0.07,-0.01,0.15,manually approximated from published Figure 2
+Naso lituratus,Browser,73,Turbinaria ornata,5,0.03,0.0,0.08,-0.06,-0.1,-0.02,manually approximated from published Figure 2
+Naso lituratus,Browser,73,Galaxaura sp.,6,0.0,0.0,0.0,-0.2,-0.25,-0.15,manually approximated from published Figure 2
+Naso lituratus,Browser,73,Halimeda sp.,7,0.0,0.0,0.0,-0.25,-0.3,-0.2,manually approximated from published Figure 2
+Naso unicornis,Browser,11,Padina boryana,1,5.05,4.25,5.85,0.59,0.49,0.69,manually approximated from published Figure 2
+Naso unicornis,Browser,11,Dictyota sp.,2,0.0,0.0,0.0,-0.11,-0.16,-0.06,manually approximated from published Figure 2
+Naso unicornis,Browser,11,Acanthophora spicifera,3,0.0,0.0,0.0,-0.08,-0.12,-0.04,manually approximated from published Figure 2
+Naso unicornis,Browser,11,Sargassum mangarevense,4,0.15,0.0,0.32,-0.09,-0.14,-0.04,manually approximated from published Figure 2
+Naso unicornis,Browser,11,Turbinaria ornata,5,0.0,0.0,0.0,-0.09,-0.14,-0.04,manually approximated from published Figure 2
+Naso unicornis,Browser,11,Galaxaura sp.,6,0.0,0.0,0.0,-0.18,-0.23,-0.13,manually approximated from published Figure 2
+Naso unicornis,Browser,11,Halimeda sp.,7,0.0,0.0,0.0,-0.22,-0.27,-0.17,manually approximated from published Figure 2
+Calotomus carolinus,Browser,56,Padina boryana,1,3.45,3.05,3.85,0.43,0.35,0.51,manually approximated from published Figure 2
+Calotomus carolinus,Browser,56,Dictyota sp.,2,0.0,0.0,0.0,-0.08,-0.11,-0.05,manually approximated from published Figure 2
+Calotomus carolinus,Browser,56,Acanthophora spicifera,3,0.0,0.0,0.0,-0.07,-0.1,-0.04,manually approximated from published Figure 2
+Calotomus carolinus,Browser,56,Sargassum mangarevense,4,1.15,0.9,1.4,0.13,0.03,0.23,manually approximated from published Figure 2
+Calotomus carolinus,Browser,56,Turbinaria ornata,5,0.0,0.0,0.0,-0.09,-0.13,-0.05,manually approximated from published Figure 2
+Calotomus carolinus,Browser,56,Galaxaura sp.,6,0.0,0.0,0.0,-0.16,-0.21,-0.11,manually approximated from published Figure 2
+Calotomus carolinus,Browser,56,Halimeda sp.,7,0.0,0.0,0.0,-0.19,-0.24,-0.14,manually approximated from published Figure 2
+Acanthurus nigrofuscus,Grazer / detritivore,17,Padina boryana,1,0.1,0.02,0.18,-0.09,-0.16,-0.02,manually approximated from published Figure 2
+Acanthurus nigrofuscus,Grazer / detritivore,17,Dictyota sp.,2,0.15,0.04,0.26,0.0,-0.12,0.12,manually approximated from published Figure 2
+Acanthurus nigrofuscus,Grazer / detritivore,17,Acanthophora spicifera,3,0.05,0.0,0.11,-0.02,-0.1,0.06,manually approximated from published Figure 2
+Acanthurus nigrofuscus,Grazer / detritivore,17,Sargassum mangarevense,4,4.05,3.05,5.05,0.31,0.16,0.46,manually approximated from published Figure 2
+Acanthurus nigrofuscus,Grazer / detritivore,17,Turbinaria ornata,5,0.2,0.05,0.35,0.0,-0.1,0.1,manually approximated from published Figure 2
+Acanthurus nigrofuscus,Grazer / detritivore,17,Galaxaura sp.,6,0.1,0.01,0.19,-0.13,-0.21,-0.05,manually approximated from published Figure 2
+Acanthurus nigrofuscus,Grazer / detritivore,17,Halimeda sp.,7,0.15,0.03,0.27,-0.14,-0.21,-0.07,manually approximated from published Figure 2
+Ctenochaetus striatus,Grazer / detritivore,9,Padina boryana,1,0.08,0.0,0.17,-0.12,-0.22,-0.02,manually approximated from published Figure 2
+Ctenochaetus striatus,Grazer / detritivore,9,Dictyota sp.,2,0.35,0.2,0.5,0.0,-0.18,0.18,manually approximated from published Figure 2
+Ctenochaetus striatus,Grazer / detritivore,9,Acanthophora spicifera,3,0.08,0.0,0.16,-0.1,-0.2,0.0,manually approximated from published Figure 2
+Ctenochaetus striatus,Grazer / detritivore,9,Sargassum mangarevense,4,0.38,0.15,0.61,0.02,-0.24,0.28,manually approximated from published Figure 2
+Ctenochaetus striatus,Grazer / detritivore,9,Turbinaria ornata,5,0.48,0.2,0.76,0.04,-0.12,0.2,manually approximated from published Figure 2
+Ctenochaetus striatus,Grazer / detritivore,9,Galaxaura sp.,6,0.28,0.05,0.51,-0.08,-0.28,0.12,manually approximated from published Figure 2
+Ctenochaetus striatus,Grazer / detritivore,9,Halimeda sp.,7,1.15,0.7,1.6,0.03,-0.22,0.28,manually approximated from published Figure 2
+Chlorurus sordidus,Scraper / small excavator,4,Padina boryana,1,0.0,0.0,0.0,-0.12,-0.2,-0.04,manually approximated from published Figure 2
+Chlorurus sordidus,Scraper / small excavator,4,Dictyota sp.,2,0.0,0.0,0.0,-0.1,-0.18,-0.02,manually approximated from published Figure 2
+Chlorurus sordidus,Scraper / small excavator,4,Acanthophora spicifera,3,0.0,0.0,0.0,-0.1,-0.18,-0.02,manually approximated from published Figure 2
+Chlorurus sordidus,Scraper / small excavator,4,Sargassum mangarevense,4,10.0,6.2,13.8,0.35,-0.1,0.8,manually approximated from published Figure 2
+Chlorurus sordidus,Scraper / small excavator,4,Turbinaria ornata,5,2.0,0.8,3.2,0.37,-0.08,0.82,manually approximated from published Figure 2
+Chlorurus sordidus,Scraper / small excavator,4,Galaxaura sp.,6,0.0,0.0,0.0,-0.2,-0.28,-0.12,manually approximated from published Figure 2
+Chlorurus sordidus,Scraper / small excavator,4,Halimeda sp.,7,0.0,0.0,0.0,-0.2,-0.28,-0.12,manually approximated from published Figure 2
+Balistapus undulatus,Unclassified,31,Padina boryana,1,0.05,0.0,0.12,0.0,-0.08,0.08,manually approximated from published Figure 2
+Balistapus undulatus,Unclassified,31,Dictyota sp.,2,1.05,0.6,1.5,0.09,-0.02,0.2,manually approximated from published Figure 2
+Balistapus undulatus,Unclassified,31,Acanthophora spicifera,3,2.05,1.55,2.55,0.43,0.3,0.56,manually approximated from published Figure 2
+Balistapus undulatus,Unclassified,31,Sargassum mangarevense,4,0.25,0.1,0.4,-0.03,-0.1,0.04,manually approximated from published Figure 2
+Balistapus undulatus,Unclassified,31,Turbinaria ornata,5,0.08,0.0,0.17,-0.1,-0.15,-0.05,manually approximated from published Figure 2
+Balistapus undulatus,Unclassified,31,Galaxaura sp.,6,0.0,0.0,0.0,-0.17,-0.25,-0.09,manually approximated from published Figure 2
+Balistapus undulatus,Unclassified,31,Halimeda sp.,7,0.0,0.0,0.0,-0.25,-0.35,-0.15,manually approximated from published Figure 2
