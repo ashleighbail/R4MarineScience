@@ -1,0 +1,140 @@
+---
+title: "Workshop 4"
+subtitle: "Spatial data in R"
+author: "Ashleigh Bail"
+format: html
+editor: visual
+---
+
+```{r}
+# Loading libraries
+
+library(tidyverse)
+library(sf)                 # simple features
+library(terra)              # for raster
+library(leaflet)            # interactive maps
+library(tmap)               # thematic maps
+```
+
+```{r}
+# Load the copepod data
+dat <- read_csv("data/workshop4/copepods_raw.csv")
+dat
+```
+
+```{r}
+ggplot(dat) +
+  aes(x = longitude, y = latitude, colour = richness_raw) +
+  geom_point()
+```
+
+```{r}
+ggplot(dat, aes(x = latitude, y = richness_raw)) +
+  stat_smooth() +
+  geom_point()
+```
+
+```{r}
+sdat <- st_as_sf(dat, coords = c("longitude", "latitude"),
+                 crs = 4326)
+
+crs4326 <- st_crs(4326)
+crs4326                 # Look at the whole coordinate reference system
+crs4326$Name            # Pull out just the name of the CRS
+```
+
+```{r}
+sdat
+
+plot(sdat["richness_raw"])
+```
+
+```{r}
+# Using tmap
+
+tm1 <- tm_shape(sdat) +
+  tm_dots(
+    fill = "richness_raw",
+    fill.scale = tm_scale_continuous(values = "plasma"),
+    fill.legend = tm_legend(title = "Species richness"),
+    size = 0.6,
+    col = "black",
+    lwd = 0.3
+  ) +
+  tm_title("Species Richness") +
+  tm_layout(
+    frame = FALSE,
+    legend.outside = TRUE
+  )
+
+# Loading shapefiles
+
+aus <- st_read("../data/workshop4/spatial-data/Aussie/Aussie.shp")
+aus
+
+shelf <- st_read("../data/workshop4/spatial-data/aus_shelf/aus_shelf.shp")
+shelf
+
+# Mapping polygons
+
+tm_shape(shelf) +
+  tm_polygons()
+```
+
+```{r}
+tm_shape(shelf, bbox = sdat) +
+  tm_polygons() +
+  tm_shape(aus) +
+  tm_polygons() +
+  tm_shape(sdat) +
+  tm_dots(
+    size = 0.02,
+    col = NA
+  )
+```
+
+```{r}
+tm_shape(shelf, bbox = sdat) +
+  tm_borders(
+    fill = "grey90",
+    col = "grey50",
+    lwd = 1,
+    lty = "dashed"
+  ) +
+  
+  tm_shape(aus) +
+  tm_polygons(
+    fill = "grey80",
+    col = "grey30",
+    lwd = 1
+  ) +
+  
+  tm_shape(sdat) +
+  tm_dots(
+    size = 0.02,
+    col = NA
+  )
+```
+
+### Nico Hahn - Making Maps with R
+
+```{r}
+
+# for loading our data
+library(raster)
+library(readr)
+library(readxl)
+library(sf)
+
+# for datasets
+library(maps)
+library(spData)
+
+# for creating animations
+library(magick)
+
+# for plotting
+library(grid)
+library(tmap)
+library(viridis)
+```
