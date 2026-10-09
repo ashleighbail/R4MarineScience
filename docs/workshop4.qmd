@@ -2,11 +2,27 @@
 title: "Workshop 4"
 subtitle: "Spatial data in R"
 author: "Ashleigh Bail"
-format: html
-editor: visual
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+ html_document:
+    code_folding: show
+    collapse: no
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 10
+    highlight: textmate
+    self-contained: true
+    theme: spacelab
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r}
+#| include: false
+
 # Loading libraries
 
 library(tidyverse)
@@ -17,24 +33,49 @@ library(tmap)               # thematic maps
 ```
 
 ```{r}
+#| message: false
+#| code-fold: true
+#| echo: true
+#| output: false
+
 # Load the copepod data
-dat <- read_csv("data/workshop4/copepods_raw.csv")
+dat <- read_csv("../data/workshop4/copepods_raw.csv")
 dat
 ```
 
+### Spatial Data Visualisation
+
 ```{r}
+#| message: false
+#| warning: false
+#| output: true
+#| code-fold: true
+#| echo: true
+
 ggplot(dat) +
   aes(x = longitude, y = latitude, colour = richness_raw) +
   geom_point()
 ```
 
 ```{r}
+#| message: false
+#| warning: false
+#| code-fold: true
+#| echo: true
+suppressMessages(
 ggplot(dat, aes(x = latitude, y = richness_raw)) +
   stat_smooth() +
   geom_point()
+)
 ```
 
 ```{r}
+#| message: false
+#| warning: false
+#| code-fold: true
+#| echo: true
+#| output: false
+
 sdat <- st_as_sf(dat, coords = c("longitude", "latitude"),
                  crs = 4326)
 
@@ -44,12 +85,20 @@ crs4326$Name            # Pull out just the name of the CRS
 ```
 
 ```{r}
-sdat
+#| message: false
+#| output: true
+#| code-fold: true
+#| echo: true
 
 plot(sdat["richness_raw"])
 ```
 
 ```{r}
+#| message: false
+#| code-fold: true
+#| echo: true
+#| output: false
+
 # Using tmap
 
 tm1 <- tm_shape(sdat) +
@@ -75,6 +124,16 @@ aus
 shelf <- st_read("../data/workshop4/spatial-data/aus_shelf/aus_shelf.shp")
 shelf
 
+
+```
+
+### Map Design and Aesthetics
+
+```{r}
+#| message: false
+#| code-fold: true
+#| echo: true
+
 # Mapping polygons
 
 tm_shape(shelf) +
@@ -82,18 +141,11 @@ tm_shape(shelf) +
 ```
 
 ```{r}
-tm_shape(shelf, bbox = sdat) +
-  tm_polygons() +
-  tm_shape(aus) +
-  tm_polygons() +
-  tm_shape(sdat) +
-  tm_dots(
-    size = 0.02,
-    col = NA
-  )
-```
+#| message: false
+#| output: true
+#| code-fold: true
+#| echo: true
 
-```{r}
 tm_shape(shelf, bbox = sdat) +
   tm_borders(
     fill = "grey90",
@@ -116,25 +168,6 @@ tm_shape(shelf, bbox = sdat) +
   )
 ```
 
-### Nico Hahn - Making Maps with R
+### Reflection on Design Choices
 
-```{r}
-
-# for loading our data
-library(raster)
-library(readr)
-library(readxl)
-library(sf)
-
-# for datasets
-library(maps)
-library(spData)
-
-# for creating animations
-library(magick)
-
-# for plotting
-library(grid)
-library(tmap)
-library(viridis)
-```
+I opted to keep the colours relatively plain and greyscale, as I feel this looks moreprofessional and is easier on the eye. The map still conveys the information effectivelywithout unnecessary visual distractions. However, if the map were to include more data,I might consider using additional colours or visual elements to distinguish betweendifferent features and improve readability.
