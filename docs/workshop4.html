@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ashleigh Bail">
-<meta name="dcterms.date" content="2026-10-09">
+<meta name="dcterms.date" content="2026-10-10">
 
 <title>Workshop 4</title>
 <style>
@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 9, 2026</p>
+      <p class="date">October 10, 2026</p>
     </div>
   </div>
   
@@ -119,6 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p>This workshop explored how R can be used to visualise and work with spatial data. Using a dataset of copepod species richness, I practised plotting geographic coordinates, working with coordinate reference systems, and creating maps using the <code>sf</code> and <code>tmap</code> packages. These packages allow spatial data to be displayed and customised in R.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -129,6 +130,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="spatial-data-visualisation" class="level3">
 <h3 class="anchored" data-anchor-id="spatial-data-visualisation">Spatial Data Visualisation</h3>
+<p>The copepod dataset was explored using <code>ggplot2</code>. By plotting longitude against latitude and colouring the points according to species richness, the sample locations and richness variations between locations could be visualised. This provided an initial overview of the spatial distribution of the data.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -144,6 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>Although this plot shows the geographic locations of the samples, it is still a scatter plot rather than a properly projected map. However, it provides a useful starting point for exploring spatial patterns before using more specialised mapping tools.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -161,6 +164,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>The relationship between latitude and species richness was explored using a scatter plot with a smoothed trend line. This allowed identification of potential patterns in richness across different latitudes , as well as any unusual variation in the data. Examining the data this way is useful before moving on to more detailed spatial visualisations.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -172,6 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>crs4326<span class="sc">$</span>Name            <span class="co"># Pull out just the name of the CRS</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p>To work with the data spatially, the original dataframe was converted into a simple features (<code>sf</code>) object using the longitude and latitude coordinates. The WGS84 coordinate reference system was used, allowing the points to be assigned geographic locations. This is an important step when creating maps, as it ensures the coordinates are interpreted correctly.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -185,6 +190,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>Using the <code>sf</code> package, a basic map was created showing the spatial distribution of copepod species richness. This was a simple way to visualise the data using its geographic coordinates. <code>tmap</code> was then explored, which provides more options for customising map colours, symbols and layouts.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -217,6 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="map-design-and-aesthetics" class="level3">
 <h3 class="anchored" data-anchor-id="map-design-and-aesthetics">Map Design and Aesthetics</h3>
+<p>To provide geographic context for the copepod data, additional spatial layers were used, i.e., shapefiles of Australia and its continental shelf.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -268,7 +275,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="reflection-on-design-choices" class="level3">
 <h3 class="anchored" data-anchor-id="reflection-on-design-choices">Reflection on Design Choices</h3>
-<p>I opted to keep the colours relatively plain and greyscale, as I feel this looks moreprofessional and is easier on the eye. The map still conveys the information effectivelywithout unnecessary visual distractions. However, if the map were to include more data,I might consider using additional colours or visual elements to distinguish betweendifferent features and improve readability.</p>
+<p>I opted to keep the colours relatively plain and greyscale, as I feel this looks more professional and is easier on the eye. The map still conveys the information effectively without unnecessary visual distractions. However, if the map were to include more data, I might consider using additional colours or visual elements to distinguish between different features and improve readability.</p>
 </section>
 
 </main>

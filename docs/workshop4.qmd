@@ -32,6 +32,8 @@ library(leaflet)            # interactive maps
 library(tmap)               # thematic maps
 ```
 
+This workshop explored how R can be used to visualise and work with spatial data. Using a dataset of copepod species richness, I practised plotting geographic coordinates, working with coordinate reference systems, and creating maps using the `sf` and `tmap` packages. These packages allow spatial data to be displayed and customised in R.
+
 ```{r}
 #| message: false
 #| code-fold: true
@@ -45,6 +47,8 @@ dat
 
 ### Spatial Data Visualisation
 
+The copepod dataset was explored using `ggplot2`. By plotting longitude against latitude and colouring the points according to species richness, the sample locations and richness variations between locations could be visualised. This provided an initial overview of the spatial distribution of the data.
+
 ```{r}
 #| message: false
 #| warning: false
@@ -57,6 +61,8 @@ ggplot(dat) +
   geom_point()
 ```
 
+Although this plot shows the geographic locations of the samples, it is still a scatter plot rather than a properly projected map. However, it provides a useful starting point for exploring spatial patterns before using more specialised mapping tools.
+
 ```{r}
 #| message: false
 #| warning: false
@@ -68,6 +74,8 @@ ggplot(dat, aes(x = latitude, y = richness_raw)) +
   geom_point()
 )
 ```
+
+The relationship between latitude and species richness was explored using a scatter plot with a smoothed trend line. This allowed identification of potential patterns in richness across different latitudes , as well as any unusual variation in the data. Examining the data this way is useful before moving on to more detailed spatial visualisations.
 
 ```{r}
 #| message: false
@@ -84,6 +92,8 @@ crs4326                 # Look at the whole coordinate reference system
 crs4326$Name            # Pull out just the name of the CRS
 ```
 
+To work with the data spatially, the original dataframe was converted into a simple features (`sf`) object using the longitude and latitude coordinates. The WGS84 coordinate reference system was used, allowing the points to be assigned geographic locations. This is an important step when creating maps, as it ensures the coordinates are interpreted correctly.
+
 ```{r}
 #| message: false
 #| output: true
@@ -92,6 +102,8 @@ crs4326$Name            # Pull out just the name of the CRS
 
 plot(sdat["richness_raw"])
 ```
+
+Using the `sf` package, a basic map was created showing the spatial distribution of copepod species richness. This was a simple way to visualise the data using its geographic coordinates. `tmap` was then explored, which provides more options for customising map colours, symbols and layouts.
 
 ```{r}
 #| message: false
@@ -128,6 +140,8 @@ shelf
 ```
 
 ### Map Design and Aesthetics
+
+To provide geographic context for the copepod data, additional spatial layers were used, i.e., shapefiles of Australia and its continental shelf.
 
 ```{r}
 #| message: false
@@ -170,4 +184,4 @@ tm_shape(shelf, bbox = sdat) +
 
 ### Reflection on Design Choices
 
-I opted to keep the colours relatively plain and greyscale, as I feel this looks moreprofessional and is easier on the eye. The map still conveys the information effectivelywithout unnecessary visual distractions. However, if the map were to include more data,I might consider using additional colours or visual elements to distinguish betweendifferent features and improve readability.
+I opted to keep the colours relatively plain and greyscale, as I feel this looks more professional and is easier on the eye. The map still conveys the information effectively without unnecessary visual distractions. However, if the map were to include more data, I might consider using additional colours or visual elements to distinguish between different features and improve readability.
