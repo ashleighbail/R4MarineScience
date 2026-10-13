@@ -182,6 +182,8 @@ tm_shape(shelf, bbox = sdat) +
   )
 ```
 
-### Reflection on Design Choices
+#### Reflection
 
-I opted to keep the colours relatively plain and greyscale, as I feel this looks more professional and is easier on the eye. The map still conveys the information effectively without unnecessary visual distractions. However, if the map were to include more data, I might consider using additional colours or visual elements to distinguish between different features and improve readability.
+This workshop demonstrated how spatial data could be used to explore geographic patterns in ecological datasets. Converting the copepod data into an sf object and incorporating shapefiles of Australia and its continental shelf helped provide geographic context and improve the interpretation of sampling locations.
+
+For the final map, I opted to keep the colours relatively plain and greyscale, as I felt this looked more professional and reduced visual distractions. However, using a colour gradient to represent species richness could improve the communication of ecological patterns. Overall, the workshop highlighted the importance of spatial data management and thoughtful map design in presenting ecological information clearly.

@@ -229,3 +229,9 @@ fish_plot
 ```
 
 Figure 1. Mean fish abundance (± SD) along the salinity gradient of the Ross River Estuary. Panels represent individual fish taxa, with salinity increasing from upstream to marine zones.
+
+#### Reflection
+
+This exercise demonstrated the importance of data cleaning and organisation when working with complex ecological datasets. Standardising species and site names, removing incorrect sensor values and accounting for zero-catch observations helped create a more reliable dataset for analysis. Combining fish abundance and salinity data also allowed patterns in species distribution across the estuary to be explored.
+
+The multi-panel plot provided a clear comparison of fish abundance along the salinity gradient, although the variability in catches highlighted the limitations of interpreting these patterns from mean values alone. Overall, the exercise reinforced the importance of careful data preparation and visualisation in producing meaningful ecological analyses.
