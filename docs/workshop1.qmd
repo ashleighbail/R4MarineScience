@@ -30,8 +30,6 @@ options(repos = c(CRAN = "https://r-project.org"))
 source("../code/workshop1.R")
 ```
 
-## Overview
-
 This workshop introduced data wrangling, summarisation and visualisation in R
 using the Palmer Penguins dataset. The analysis explores differences in body
 mass between penguin species and islands and compares different ways of

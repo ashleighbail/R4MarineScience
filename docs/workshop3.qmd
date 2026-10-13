@@ -28,6 +28,9 @@ library(patchwork)
 
 ```
 
+This workshop focused on developing skills in scientific data visualisation and working with publicly available environmental datasets. The first exercise involved critically evaluating and redesigning a published figure that might be in need of improvement. The second exercise explored Queensland Fisheries data to compare commercial catch and fishing effort between the East Coast and Gulf of Carpentaria from 2007 to 2025.
+
+Together, these exercises demonstrated how data cleaning, visualisation and thoughtful figure design could be used to identify ecological patterns and communicate findings effectively.
 
 ### Exercise 1: Plot Deconstruction
 
